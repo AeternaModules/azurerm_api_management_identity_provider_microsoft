@@ -1,3 +1,7 @@
+output "api_management_identity_provider_microsofts_id" {
+  description = "Map of id values across all api_management_identity_provider_microsofts, keyed the same as var.api_management_identity_provider_microsofts"
+  value       = { for k, v in azurerm_api_management_identity_provider_microsoft.api_management_identity_provider_microsofts : k => v.id }
+}
 output "api_management_identity_provider_microsofts_api_management_name" {
   description = "Map of api_management_name values across all api_management_identity_provider_microsofts, keyed the same as var.api_management_identity_provider_microsofts"
   value       = { for k, v in azurerm_api_management_identity_provider_microsoft.api_management_identity_provider_microsofts : k => v.api_management_name }
