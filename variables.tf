@@ -5,8 +5,8 @@ Required:
     - api_management_name
     - client_id
     - client_secret
-    - client_secret_key_vault_id (alternative to client_secret - read from Key Vault instead)
-    - client_secret_key_vault_secret_name (alternative to client_secret - read from Key Vault instead)
+    - client_secret_key_vault_id (optional, alternative to client_secret)
+    - client_secret_key_vault_secret_name (optional, alternative to client_secret)
     - resource_group_name
 EOT
 
@@ -18,22 +18,6 @@ EOT
     client_secret_key_vault_secret_name = optional(string)
     resource_group_name                 = string
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_identity_provider_microsofts : (
-        can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", v.client_id))
-      )
-    ])
-    error_message = "must be a valid UUID"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_identity_provider_microsofts : (
-        length(v.client_secret) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_api_management_identity_provider_microsoft's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -54,5 +38,11 @@ EOT
   #   source:    [from resourcegroups.ValidateName] !matched
   # path: api_management_name
   #   source:    [from validate.ApiManagementServiceName] !matched
+  # path: client_id
+  #   condition: can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", value))
+  #   message:   must be a valid UUID
+  # path: client_secret
+  #   condition: length(value) > 0
+  #   message:   must not be empty
 }
 
